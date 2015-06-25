@@ -8,13 +8,13 @@ void error(int code) {
 
     switch (code) {
 	case CTRLD:
-	    fprintf(stderr, "Unexpected end of input.");
+	    fprintf(stderr, "Unexpected end of input.\n");
 	    break;
 	case MEM:
-	    fprintf(stderr, "Program out of memory.");
+	    fprintf(stderr, "Program out of memory.\n");
 	    break;
 	case CWD:
-	    fprintf(stderr, "Could not read current working directory.");
+	    fprintf(stderr, "Could not read current working directory.\n");
 	    break;
 	default:
 	    break;
@@ -45,14 +45,38 @@ char* handle_cwd(void) {
     }
 }
 
-void parse_command(char* line) {
-    printf("%s\n", line);
+char** parse_command(char* line) {
+    
+    char* save;
+    char* token;
+    char* line2 = copy_string(line);
+    int argc = 0;
+    char** args;
+
+    token = strtok_r(line, " ", &save);
+    while (token) {
+	argc++;
+	printf("%s\n", token);
+	token = strtok_r(NULL, " ", &save);
+    }
+    //printf("argc: %d\n", argc);
+    if (argc > 0) {
+	args = malloc(sizeof(char*) * argc);
+	for (int i = 0; i < argc; i++) {
+	    args[i] = malloc(sizeof(char) * 255);
+	}
+	return args;
+    } else {
+	return NULL;
+    }
 }
 
 int main(int argc, char** argv) {
 
     char line[255];
     int c;
+    char** args;
+
     while (1) {
 	printf("%s$ ", handle_cwd());
 	if (fgets(line, sizeof(line), stdin) == NULL) {
@@ -60,12 +84,15 @@ int main(int argc, char** argv) {
 	} else {
 	    if (line[strlen(line)-1] != '\n') {
 		while ((c = getchar() != '\n') && (c != EOF)) {
-				      // Expunge any remaining characters on stdin
+		    // Consume any remaining characters on stdin
 		}
 	    } else {
 		line[strlen(line)-1] = '\0';
 	    }
-	    parse_command(copy_string(line));
+	    args = parse_command(copy_string(line));
+	    if (args != NULL) {
+
+	    }
 	}
     }
 }
