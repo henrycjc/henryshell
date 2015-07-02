@@ -56,9 +56,11 @@ char** parse_command(char* line) {
 	token = strtok_r(line, " ", &save);
 	while (token) {
 		argc++;
-		printf("%s\n", token);
+		//printf("%s\n", token);
 		token = strtok_r(NULL, " ", &save);
 	}
+	printf("%s\n", line);
+	printf("%s\n", line2);
 	//printf("argc: %d\n", argc);
 	if (argc > 0) {
 		args = malloc(sizeof(char*) * argc);
